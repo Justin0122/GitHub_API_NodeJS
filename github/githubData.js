@@ -6,7 +6,7 @@ async function fetchReadme(GITHUB_USERNAME, cache) {
 
         if (!readme) {
             console.log('Fetching readme from GitHub');
-            const response = await fetch(`https://raw.githubusercontent.com/Justin0122/${GITHUB_USERNAME}/master/README.md`);
+            const response = await fetch(`https://raw.githubusercontent.com/${GITHUB_USERNAME}/${GITHUB_USERNAME}/master/README.md`);
             readme = await response.text();
             cache.set(cacheKey, readme); // Cache readme
         } else {
