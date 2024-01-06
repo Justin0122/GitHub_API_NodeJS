@@ -1,20 +1,14 @@
 const express = require('express');
 const routes = require('./routes/api');
 const errorHandler = require('./errorHandler');
-const NodeCache = require('node-cache');
+const setupCors = require('./middlewares/setupCors');
+const { createCache } = require('./utils/cache');
 require('dotenv').config();
 
 const app = express();
-const cache = new NodeCache({ stdTTL: 86400 }); // Cache for 24 hours (in seconds)
+const cache = createCache();
 
-app.use((req, res, next) => {
-    res.header('Access-Control-Allow-Origin', 'http://localhost:5173');
-    res.header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
-    res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
-    res.header('Access-Control-Allow-Credentials', 'true');
-    next();
-});
-
+app.use(setupCors);
 app.use('/api', (req, res, next) => {
     req.cache = cache;
     next();
