@@ -27,15 +27,12 @@ async function getLanguagesForRepo(octokit, owner, repo, cache) {
         let languages = cache.get(cacheKey);
 
         if (!languages) {
-            console.log('Fetching languages from GitHub');
             const languagesResponse = await octokit.request('GET /repos/{owner}/{repo}/languages', {
                 owner,
                 repo,
             });
             languages = { [repo]: languagesResponse.data };
             cache.set(cacheKey, languages); // Cache languages
-        } else {
-            console.log('Fetching languages from cache');
         }
 
         return languages;
@@ -45,7 +42,7 @@ async function getLanguagesForRepo(octokit, owner, repo, cache) {
     }
 }
 
-async function getRepositories(octokit, req) {
+async function getRepositories(octokit, cache) {
     try {
         const response = await octokit.request('GET /user/repos', {
             headers: {
@@ -69,7 +66,7 @@ async function getRepositories(octokit, req) {
             )
             .sort((a, b) => new Date(b.updated_at) - new Date(a.updated_at));
 
-        const languagePromises = myRepositories.map(repo => getLanguagesForRepo(octokit, process.env.GITHUB_USERNAME, repo.name, req.cache));
+        const languagePromises = myRepositories.map(repo => getLanguagesForRepo(octokit, process.env.GITHUB_USERNAME, repo.name, cache));
 
         const languages = await Promise.all(languagePromises);
 
