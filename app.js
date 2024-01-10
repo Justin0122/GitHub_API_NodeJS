@@ -8,6 +8,8 @@ require('dotenv').config();
 const app = express();
 const cache = createCache();
 
+app.use(express.static('public'));
+
 app.use(setupCors);
 app.use('/api', (req, res, next) => {
     req.cache = cache;
